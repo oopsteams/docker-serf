@@ -1,14 +1,18 @@
-# Creates a base centos image with serf and dnsmasq
+# Creates a base ubuntu image with serf and dnsmasq
 #
 # it aims to create a dynamic cluster of docker containers
 # each able to refer other by fully qulified domainnames
 #
 # this isn't trivial as docker has readonly /etc/hosts
+#
+# The docker images was directly taken from sequenceiq and converetd to ubuntu image
+# because I wanted to create the cluster on ubuntu.
 
-FROM tianon/centos:6.5
-MAINTAINER SequenceIQ
+FROM ubuntu:saucy
+MAINTAINER Alvin Henrick
 
-RUN yum install -y dnsmasq unzip curl
+RUN apt-get update
+RUN apt-get install -y dnsmasq unzip curl
 
 # dnsmasq configuration
 ADD dnsmasq.conf /etc/dnsmasq.conf
@@ -28,17 +32,9 @@ RUN chmod +x  $SERF_CONFIG_DIR/event-router.sh
 
 ADD handlers $SERF_CONFIG_DIR/handlers
 
-# docker.io hangs on ADD ???
-# https://index.docker.io/builds/github/4622/sequenceiq/docker-serf/builds/brvni7g9r73bb92nqaszgbp/
-#ADD serf.sysv.init /etc/init.d/serf
-#RUN chmod +x /etc/init.d/serf
-
 ADD start-serf-agent.sh  $SERF_CONFIG_DIR/start-serf-agent.sh
 RUN chmod +x  $SERF_CONFIG_DIR/start-serf-agent.sh
 
-EXPOSE 7373
-
-#ENTRYPOINT ["/bin/serf", "agent", "-config-dir", "/etc/serf", "-node", "$(hostname -f)"]
-#CMD ["-log-level", "debug"]
+EXPOSE 7373 7946
 
 CMD /etc/serf/start-serf-agent.sh

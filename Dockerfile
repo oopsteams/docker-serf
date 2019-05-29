@@ -8,7 +8,7 @@
 # The docker images was directly taken from sequenceiq and converetd to ubuntu image
 # because I wanted to create the cluster on ubuntu.
 
-FROM ubuntu:saucy
+FROM ubuntu:sshd
 MAINTAINER Alvin Henrick
 
 RUN apt-get update
@@ -19,7 +19,7 @@ ADD dnsmasq.conf /etc/dnsmasq.conf
 ADD resolv.dnsmasq.conf /etc/resolv.dnsmasq.conf
 
 # install serfdom.io
-RUN curl -Lso /tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.5.0_linux_amd64.zip
+RUN curl -Lso /tmp/serf.zip https://releases.hashicorp.com/serf/0.8.1/serf_0.8.1_linux_amd64.zip 
 RUN unzip /tmp/serf.zip -d /bin
 
 ENV SERF_CONFIG_DIR /etc/serf
